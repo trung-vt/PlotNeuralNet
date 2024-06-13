@@ -18,7 +18,7 @@ arch = [
     to_ConvConvRelu( 
         name='ccr_b1', ###############
         s_filer=256, 
-        n_filer=(64,64), 
+        n_filer=(32,32), 
         offset="(0,0,0)", to="(0,0,0)", 
         width=(2,2), height=40, depth=40  ),
 
@@ -33,7 +33,7 @@ arch = [
         botton='pool_b1', ##############
         top='pool_b2', ##############
         s_filer=128, 
-        n_filer=128, 
+        n_filer=64, 
         offset="(1,0,0)", size=(32,32,3.5), opacity=0.5 ),
 
     *block_2ConvPool( 
@@ -41,7 +41,7 @@ arch = [
         botton='pool_b2', ############## 
         top='pool_b3', ##############
         s_filer=64, 
-        n_filer=256, 
+        n_filer=128, 
         offset="(1,0,0)", size=(25,25,4.5), opacity=0.5 ),
 
     *block_2ConvPool( 
@@ -49,7 +49,7 @@ arch = [
         botton='pool_b3', ##############
         top='pool_b4', ##############
         s_filer=32,  
-        n_filer=512, 
+        n_filer=256, 
         offset="(1,0,0)", size=(16,16,5.5), opacity=0.5 ),
 
 
@@ -59,7 +59,7 @@ arch = [
     to_ConvConvRelu( 
         name='ccr_b5', 
         s_filer=16, 
-        n_filer=(1024,1024), 
+        n_filer=(512,512), 
         offset="(2,0,0)", 
         to="(pool_b4-east)", ##############
         width=(8,8), height=8, depth=8, caption="Bottleneck"  ),
@@ -73,7 +73,7 @@ arch = [
         botton="ccr_b5", 
         top='end_b6', 
         s_filer=32,  
-        n_filer=512, 
+        n_filer=256, 
         offset="(2.1,0,0)", size=(16,16,5.0), opacity=0.5 ),
 
     # to_skip( of='ccr_b4', to='ccr_res_b6', pos=1.25),
@@ -83,7 +83,7 @@ arch = [
         botton="end_b6", 
         top='end_b7', 
         s_filer=64, 
-        n_filer=256, 
+        n_filer=128, 
         offset="(2.1,0,0)", size=(25,25,4.5), opacity=0.5 ),
 
     to_skip( of='ccr_b3', to='ccr_res_b7', pos=1.25),  
@@ -93,7 +93,8 @@ arch = [
           botton="end_b7", 
           top='end_b8', 
           s_filer=128, 
-          n_filer=128, offset="(2.1,0,0)", size=(32,32,3.5), opacity=0.5 ),
+          n_filer=64, 
+          offset="(2.1,0,0)", size=(32,32,3.5), opacity=0.5 ),
 
     to_skip( of='ccr_b2', to='ccr_res_b8', pos=1.25),    
     
@@ -104,7 +105,9 @@ arch = [
         botton="end_b8", 
         top='end_b9', 
         s_filer=256,
-        n_filer=64,  offset="(2.1,0,0)", size=(40,40,2.5), opacity=0.5 ),
+        n_filer=32,  
+        offset="(2.1,0,0)", size=(40,40,2.5), opacity=0.5 ),
+        
     to_skip( of='ccr_b1', to='ccr_res_b9', pos=1.25),
     
     to_ConvSoftMax( 
