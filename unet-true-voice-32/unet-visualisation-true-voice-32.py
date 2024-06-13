@@ -28,13 +28,40 @@ arch = [
         to="(ccr_b1-east)", #################
         width=1, height=32, depth=32, opacity=0.5),
     
-    *block_2ConvPool( 
-        name='b2', ##############
-        botton='pool_b1', ##############
-        top='pool_b2', ##############
-        s_filer=128, 
-        n_filer=64, 
-        offset="(1,0,0)", size=(32,32,3.5), opacity=0.5 ),
+    # *block_2ConvPool( 
+    #     name='b2', ##############
+    #     botton='pool_b1', ##############
+    #     top='pool_b2', ##############
+    #     s_filer=128, 
+    #     n_filer=64, 
+    #     offset="(1,0,0)", size=(32,32,3.5), opacity=0.5 ),
+
+    # [
+    to_ConvConvRelu( 
+        name="ccr_b2",
+        s_filer=str(128), 
+        n_filer=(64,64), 
+        offset="(1,0,0)", 
+        to="(pool_b1-east)", 
+        width=(3.5, 3.5), 
+        height=32, 
+        depth=32,   
+        ),    
+    to_Pool(         
+        name="pool_b2", 
+        offset="(0,0,0)", 
+        to="(ccr_b2-east)",  
+        width=1,         
+        height=32 - 8, 
+        depth=32 - 8, 
+        opacity=0.5, 
+        ),
+    to_connection( 
+        "pool_b1", 
+        "ccr_b2"
+        ),
+    # ],
+
 
     *block_2ConvPool( 
         name='b3', ##############
@@ -107,7 +134,7 @@ arch = [
         s_filer=256,
         n_filer=32,  
         offset="(2.1,0,0)", size=(40,40,2.5), opacity=0.5 ),
-        
+
     to_skip( of='ccr_b1', to='ccr_res_b9', pos=1.25),
     
     to_ConvSoftMax( 
