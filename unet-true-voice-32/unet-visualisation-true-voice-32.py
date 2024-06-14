@@ -68,7 +68,7 @@ def get_encoder_block(
             opacity=0.5
         ),
         # to_connection_vertical( relative_to, pool_name),
-        arrow(f"{relative_to}-south", f"{pool_name}-north"),
+        arrow(f"{relative_to}-southwest", f"{pool_name}-northwest"),
         *get_double_conv(
             name=f"b{block_num}",
             offset="(0.5, 0, 0)",
@@ -127,7 +127,7 @@ def get_decoder_block(
             offset="(0.5, 0, 0)",
             relative_to=f"(ccr_res_b{block_num}-east)",
             feature_map_size=feature_map_size,
-            n_channels=n_out_channels_display,
+            n_channels=n_channels,
             feature_map_size_display=feature_map_size_display,
             n_channels_display=n_out_channels_display,
             n_dim=n_dim,
@@ -223,7 +223,15 @@ arch = [
         n_dim=2,
     ),
 
-
+    *get_decoder_block(
+        block_num=8, encoder_block_num=2,
+        offset="(0, 4, 0)", relative_to="ccr_b7", direction="northwest",
+        feature_map_size=128, n_channels=64,
+        n_encoder_channels_display=4,
+        n_out_channels_display=4,
+        feature_map_size_display=20,
+        n_dim=2,
+    ),
 
 
     # *block_Unconv( 
@@ -234,68 +242,68 @@ arch = [
     #       n_filer=64, 
     #       offset="(2.1,0,0)", size=(32,32,3.5), opacity=0.5 ),
 
-    # # [
-        to_UnPool(  
-            name='unpool_b8',    
-            offset="(0,4.5,0)",    
-            # to="(ccr_b7-east)",         
-            to="(ccr_b7-east)",         
-            # to="(end_b7-east)",         
-            width=1,              
-            height=20,       
-            depth=20, 
-            opacity=0.5 
-            ),
-        to_ConvRes( 
-            name='ccr_res_b8',   
-            offset="(0,0,0)", 
-            to="(unpool_b8-east)",    
-            s_filer=str(128), 
-            n_filer=str(64), 
-            width=5, 
-            height=20, 
-            depth=20, 
-            opacity=0.5 
-            ),       
-        to_Conv(    
-            name='ccr_b8',       
-            offset="(0,0,0)", 
-            to="(ccr_res_b8-east)",   
-            s_filer=str(128), 
-            n_filer=str(64), 
-            width=5, 
-            height=20, 
-            depth=20
-            ),
-        to_ConvRes( 
-            name='ccr_res_c_b8', 
-            offset="(0,0,0)", 
-            to="(ccr_b8-east)",       
-            s_filer=str(128), 
-            n_filer=str(64), 
-            width=5, 
-            height=20, 
-            depth=20,
-            opacity=0.5 
-            ),       
-        to_Conv(    
-            name='end_b8',            
-            offset="(0,0,0)", 
-            to="(ccr_res_c_b8-east)", 
-            s_filer=str(128), 
-            n_filer=str(64), 
-            width=5, 
-            height=20, 
-            depth=20
-            ),
-        to_connection( 
-            "ccr_b7",
-            # "end_b7", 
-            "unpool_b8"
-            ),
-    # # ]
+    # # # [
+    #     to_UnPool(  
+    #         name='unpool_b8',    
+    #         offset="(0,4.5,0)",    
+    #         # to="(ccr_b7-east)",         
+    #         to="(ccr_b7-east)",         
+    #         # to="(end_b7-east)",         
+    #         width=1,              
+    #         height=20,       
+    #         depth=20, 
+    #         opacity=0.5 
+    #         ),
+    #     to_ConvRes( 
+    #         name='ccr_res_b8',   
+    #         offset="(0,0,0)", 
+    #         to="(unpool_b8-east)",    
+    #         s_filer=str(128), 
+    #         n_filer=str(64), 
+    #         width=5, 
+    #         height=20, 
+    #         depth=20, 
+    #         opacity=0.5 
+    #         ),       
+    #     to_Conv(    
+    #         name='ccr_b8',       
+    #         offset="(0,0,0)", 
+    #         to="(ccr_res_b8-east)",   
+    #         s_filer=str(128), 
+    #         n_filer=str(64), 
+    #         width=5, 
+    #         height=20, 
+    #         depth=20
+    #         ),
+    #     to_ConvRes( 
+    #         name='ccr_res_c_b8', 
+    #         offset="(0,0,0)", 
+    #         to="(ccr_b8-east)",       
+    #         s_filer=str(128), 
+    #         n_filer=str(64), 
+    #         width=5, 
+    #         height=20, 
+    #         depth=20,
+    #         opacity=0.5 
+    #         ),       
+    #     to_Conv(    
+    #         name='end_b8',            
+    #         offset="(0,0,0)", 
+    #         to="(ccr_res_c_b8-east)", 
+    #         s_filer=str(128), 
+    #         n_filer=str(64), 
+    #         width=5, 
+    #         height=20, 
+    #         depth=20
+    #         ),
+    #     to_connection( 
+    #         "ccr_b7",
+    #         # "end_b7", 
+    #         "unpool_b8"
+    #         ),
+    # # # ]
 
-    to_skip( of='ccr_b2', to='ccr_res_b8', pos=1.25),    
+    # to_skip( of='ccr_b2', to='ccr_res_b8', pos=1.25),    
     
 
 
@@ -311,8 +319,8 @@ arch = [
         to_UnPool(  
             name='unpool_b9',    
             offset="(0,8,0)",    
-            # to="(ccr_b8-east)",         
-            to="(end_b8-east)",         
+            to="(ccr_b8-east)",         
+            # to="(end_b8-east)",         
             width=1,              
             height=16 + 24,       
             depth=16 + 24, 
@@ -361,8 +369,8 @@ arch = [
             depth=16 + 24
             ),
         to_connection( 
-            # "ccr_b8",
-            "end_b8", 
+            "ccr_b8",
+            # "end_b8", 
             "unpool_b9"
             ),
     # # ]

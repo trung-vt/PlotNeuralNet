@@ -63,7 +63,7 @@
         }
     };
 
-\draw [connection]  (ccr_b1-south)    -- node {\midarrow} (pool_b2-north);
+\draw [connection]  (ccr_b1-southwest)    -- node {\midarrow} (pool_b2-northwest);
 
 \pic[shift={(0.5, 0, 0)}] at (pool_b2-east) 
     {Box={
@@ -107,7 +107,7 @@
         }
     };
 
-\draw [connection]  (ccr_b2-south)    -- node {\midarrow} (pool_b3-north);
+\draw [connection]  (ccr_b2-southwest)    -- node {\midarrow} (pool_b3-northwest);
 
 \pic[shift={(0.5, 0, 0)}] at (pool_b3-east) 
     {Box={
@@ -151,7 +151,7 @@
         }
     };
 
-\draw [connection]  (ccr_b3-south)    -- node {\midarrow} (pool_b4-north);
+\draw [connection]  (ccr_b3-southwest)    -- node {\midarrow} (pool_b4-northwest);
 
 \pic[shift={(0.5, 0, 0)}] at (pool_b4-east) 
     {Box={
@@ -221,7 +221,7 @@
     {Box={
         name=ccr_b7a,
         caption= ,
-        xlabel={{8, }},
+        xlabel={{128, }},
         zlabel=64,
         fill=\ConvColor,
         height=10,
@@ -234,7 +234,7 @@
     {Box={
         name=ccr_b7,
         caption= ,
-        xlabel={{8, }},
+        xlabel={{128, }},
         zlabel=64,
         fill=\ConvColor,
         height=10,
@@ -247,75 +247,32 @@
 
 \draw [connection]  (ccr_res_b7-east)    -- node {\midarrow} (ccr_b7a-west);
 
-\pic[shift={ (0,4.5,0) }] at (ccr_b7-east) 
+\pic[shift={ (0, 4, 0) }] at (ccr_b7-northwest) 
     {Box={
         name=unpool_b8,
         caption= ,
         fill=\UnpoolColor,
         opacity=0.5,
         height=20,
-        width=1,
-        depth=20
+        width=4,
+        depth=0
         }
     };
 
-\pic[shift={ (0,0,0) }] at (unpool_b8-east) 
-    {RightBandedBox={
+\draw [connection]  (ccr_b7-northwest)    -- node {\midarrow} (unpool_b8-southwest);
+
+\pic[shift={(0, 0, 0)}] at (unpool_b8-east) 
+    {Box={
         name=ccr_res_b8,
         caption= ,
-        xlabel={{ 64, }},
-        zlabel=128,
-        fill={rgb:white,1;black,3},
-        bandfill={rgb:white,1;black,2},
-        opacity=0.5,
-        height=20,
-        width=5,
-        depth=20
-        }
-    };
-
-\pic[shift={(0,0,0)}] at (ccr_res_b8-east) 
-    {Box={
-        name=ccr_b8,
-        caption= ,
         xlabel={{64, }},
         zlabel=128,
         fill=\ConvColor,
         height=20,
-        width=5,
-        depth=20
+        width=4,
+        depth=0
         }
     };
-
-\pic[shift={ (0,0,0) }] at (ccr_b8-east) 
-    {RightBandedBox={
-        name=ccr_res_c_b8,
-        caption= ,
-        xlabel={{ 64, }},
-        zlabel=128,
-        fill={rgb:white,1;black,3},
-        bandfill={rgb:white,1;black,2},
-        opacity=0.5,
-        height=20,
-        width=5,
-        depth=20
-        }
-    };
-
-\pic[shift={(0,0,0)}] at (ccr_res_c_b8-east) 
-    {Box={
-        name=end_b8,
-        caption= ,
-        xlabel={{64, }},
-        zlabel=128,
-        fill=\ConvColor,
-        height=20,
-        width=5,
-        depth=20
-        }
-    };
-
-\draw [connection]  (ccr_b7-east)    -- node {\midarrow} (unpool_b8-west);
 
 \path (ccr_b2-southeast) -- (ccr_b2-northeast) coordinate[pos=1.25] (ccr_b2-top) ;
 \path (ccr_res_b8-south)  -- (ccr_res_b8-north)  coordinate[pos=1.25] (ccr_res_b8-top) ;
@@ -324,7 +281,37 @@
 -- node {\copymidarrow}(ccr_res_b8-top)
 -- node {\copymidarrow} (ccr_res_b8-north);
 
-\pic[shift={ (0,8,0) }] at (end_b8-east) 
+\pic[shift={(0.5, 0, 0)}] at (ccr_res_b8-east) 
+    {Box={
+        name=ccr_b8a,
+        caption= ,
+        xlabel={{64, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=20,
+        width=4,
+        depth=0
+        }
+    };
+
+\pic[shift={(0.5, 0, 0)}] at (ccr_b8a-east) 
+    {Box={
+        name=ccr_b8,
+        caption= ,
+        xlabel={{64, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=20,
+        width=4,
+        depth=0
+        }
+    };
+
+\draw [connection]  (ccr_b8a-east)    -- node {\midarrow} (ccr_b8-west);
+
+\draw [connection]  (ccr_res_b8-east)    -- node {\midarrow} (ccr_b8a-west);
+
+\pic[shift={ (0,8,0) }] at (ccr_b8-east) 
     {Box={
         name=unpool_b9,
         caption= ,
@@ -392,7 +379,7 @@
         }
     };
 
-\draw [connection]  (end_b8-east)    -- node {\midarrow} (unpool_b9-west);
+\draw [connection]  (ccr_b8-east)    -- node {\midarrow} (unpool_b9-west);
 
 \path (ccr_b1-southeast) -- (ccr_b1-northeast) coordinate[pos=1.25] (ccr_b1-top) ;
 \path (ccr_res_b9-south)  -- (ccr_res_b9-north)  coordinate[pos=1.25] (ccr_res_b9-top) ;
