@@ -195,6 +195,8 @@
         }
     };
 
+\draw [connection]  (ccr_b4-northwest)    -- node {\midarrow} (unpool_b7-southwest);
+
 \pic[shift={(0, 0, 0)}] at (unpool_b7-east) 
     {Box={
         name=ccr_res_b7,
@@ -208,34 +210,6 @@
         }
     };
 
-\pic[shift={(0.5, 0, 0)}] at (ccr_res_b7-east) 
-    {Box={
-        name=ccr_b7,
-        caption= ,
-        xlabel={{128, }},
-        zlabel=64,
-        fill=\ConvColor,
-        height=10,
-        width=8,
-        depth=0
-        }
-    };
-
-\pic[shift={(0.5, 0, 0)}] at (ccr_b7-east) 
-    {Box={
-        name=end_b7,
-        caption= ,
-        xlabel={{128, }},
-        zlabel=64,
-        fill=\ConvColor,
-        height=10,
-        width=8,
-        depth=0
-        }
-    };
-
-\draw [connection]  (ccr_b4-northwest)    -- node {\midarrow} (unpool_b7-southwest);
-
 \path (ccr_b3-southeast) -- (ccr_b3-northeast) coordinate[pos=1.25] (ccr_b3-top) ;
 \path (ccr_res_b7-south)  -- (ccr_res_b7-north)  coordinate[pos=1.25] (ccr_res_b7-top) ;
 \draw [copyconnection]  (ccr_b3-northeast)  
@@ -243,7 +217,37 @@
 -- node {\copymidarrow}(ccr_res_b7-top)
 -- node {\copymidarrow} (ccr_res_b7-north);
 
-\pic[shift={ (0,4.5,0) }] at (end_b7-east) 
+\pic[shift={(0.5, 0, 0)}] at (ccr_res_b7-east) 
+    {Box={
+        name=ccr_b7a,
+        caption= ,
+        xlabel={{8, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=10,
+        width=8,
+        depth=0
+        }
+    };
+
+\pic[shift={(0.5, 0, 0)}] at (ccr_b7a-east) 
+    {Box={
+        name=ccr_b7,
+        caption= ,
+        xlabel={{8, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=10,
+        width=8,
+        depth=0
+        }
+    };
+
+\draw [connection]  (ccr_b7a-east)    -- node {\midarrow} (ccr_b7-west);
+
+\draw [connection]  (ccr_res_b7-east)    -- node {\midarrow} (ccr_b7a-west);
+
+\pic[shift={ (0,4.5,0) }] at (ccr_b7-east) 
     {Box={
         name=unpool_b8,
         caption= ,
@@ -311,7 +315,7 @@
         }
     };
 
-\draw [connection]  (end_b7-east)    -- node {\midarrow} (unpool_b8-west);
+\draw [connection]  (ccr_b7-east)    -- node {\midarrow} (unpool_b8-west);
 
 \path (ccr_b2-southeast) -- (ccr_b2-northeast) coordinate[pos=1.25] (ccr_b2-top) ;
 \path (ccr_res_b8-south)  -- (ccr_res_b8-north)  coordinate[pos=1.25] (ccr_res_b8-top) ;
