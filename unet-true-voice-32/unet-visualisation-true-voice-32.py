@@ -4,6 +4,8 @@ sys.path.append('../')
 from pycore.tikzeng import *
 from pycore.blocks  import *
 
+N_DIM = 2
+
 def get_double_conv(
         name: str,
         offset: str, relative_to: str,
@@ -133,29 +135,6 @@ def get_decoder_block(
             n_dim=n_dim,
         ),
         arrow(f"ccr_res_b{block_num}-east", f"ccr_b{block_num}a-west"),
-
-
-        # to_Conv(    
-        #     name=f'ccr_b{block_num}',       
-        #     offset="(0.5, 0, 0)", 
-        #     to=f"(ccr_res_b{block_num}-east)",   
-        #     s_filer=str(feature_map_size), 
-        #     n_filer=str(n_channels), 
-        #     width=n_out_channels_display, 
-        #     height=feature_map_size_display, 
-        #     depth=depth
-        # ),
-        # to_Conv(    
-        #     name=f'end_b{block_num}',            
-        #     offset="(0.5, 0, 0)", 
-        #     # to=f"(ccr_res_c_b{block_num}-east)", 
-        #     to=f"(ccr_b{block_num}-east)", 
-        #     s_filer=str(feature_map_size), 
-        #     n_filer=str(n_channels), 
-        #     width=n_out_channels_display, 
-        #     height=feature_map_size_display, 
-        #     depth=depth
-        # ),
     ]
 
 
@@ -176,7 +155,7 @@ arch = [
         n_channels=32,
         feature_map_size_display=40,
         n_channels_display=2,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     # block-001: maxpool + double conv 32->64
@@ -187,7 +166,7 @@ arch = [
         feature_map_size_display=20,
         n_in_channels_display=2,
         n_out_channels_display=4,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     # block-002: maxpool + double conv 64->128
@@ -198,7 +177,7 @@ arch = [
         feature_map_size_display=10,
         n_in_channels_display=4,
         n_out_channels_display=8,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     # block-003: maxpool + double conv 128->256
@@ -209,7 +188,7 @@ arch = [
         feature_map_size_display=5,
         n_in_channels_display=8,
         n_out_channels_display=16,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     
@@ -220,7 +199,7 @@ arch = [
         n_encoder_channels_display=8,
         n_out_channels_display=8,
         feature_map_size_display=10,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     *get_decoder_block(
@@ -230,7 +209,7 @@ arch = [
         n_encoder_channels_display=4,
         n_out_channels_display=4,
         feature_map_size_display=20,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
     *get_decoder_block(
@@ -240,17 +219,19 @@ arch = [
         n_encoder_channels_display=2,
         n_out_channels_display=2,
         feature_map_size_display=40,
-        n_dim=2,
+        n_dim=N_DIM,
     ),
 
 
     to_ConvSoftMax( 
         name="soft1", 
         s_filer=256, 
-        offset="(0.75,0,0)", 
+        offset="(0.75, 0, 0)", 
         # to="(end_b9-east)",
         to="(ccr_b9-east)",
-        width=1, height=40, depth=40, 
+        width=1, height=40, 
+        # depth=40, 
+        depth=0, 
         # caption="SOFT" 
         # caption="MSE"
         ),
