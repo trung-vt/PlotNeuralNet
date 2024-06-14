@@ -38,7 +38,7 @@
 
 \pic[shift={(0.5, 0, 0)}] at (ccr_b1a-east) 
     {Box={
-        name=ccr_b1b,
+        name=ccr_b1,
         caption= ,
         xlabel={{32, }},
         zlabel=256,
@@ -49,9 +49,9 @@
         }
     };
 
-\draw [connection]  (ccr_b1a-east)    -- node {\midarrow} (ccr_b1b-west);
+\draw [connection]  (ccr_b1a-east)    -- node {\midarrow} (ccr_b1-west);
 
-\pic[shift={ (0, -5, 0) }] at (ccr_b1b-southwest) 
+\pic[shift={ (0, -5, 0) }] at (ccr_b1-southwest) 
     {Box={
         name=pool_b1,
         caption= ,
@@ -63,22 +63,20 @@
         }
     };
 
-\draw [connection]  (ccr_b1b-south)    -- node {\midarrow} (pool_b1-north);
+\draw [connection]  (ccr_b1-south)    -- node {\midarrow} (pool_b1-north);
 
-\pic[shift={(0.5, 0, 0)}] at (pool_b1-east) 
+\pic[shift={(0.5,0,0)}] at (pool_b1-east) 
     {Box={
         name=ccr_b2a,
         caption= ,
         xlabel={{64, }},
-        zlabel=,
+        zlabel=128,
         fill=\ConvColor,
         height=20,
         width=4,
         depth=0
         }
     };
-
-\draw [connection]  (pool_b1-east)    -- node {\midarrow} (ccr_b2a-west);
 
 \pic[shift={(0.5, 0, 0)}] at (ccr_b2a-east) 
     {Box={
@@ -95,7 +93,9 @@
 
 \draw [connection]  (ccr_b2a-east)    -- node {\midarrow} (ccr_b2-west);
 
-\pic[shift={ (0,-4.5,0) }] at (ccr_b2-east) 
+\draw [connection]  (pool_b1-east)    -- node {\midarrow} (ccr_b2a-west);
+
+\pic[shift={ (0,-4.5,0) }] at (ccr_b2-southwest) 
     {Box={
         name=pool_b2,
         caption= ,
@@ -103,25 +103,41 @@
         opacity=0.5,
         height=10,
         width=4,
-        depth=10
+        depth=0
         }
     };
 
-\pic[shift={ (0,0,0) }] at (pool_b2-east) 
-    {RightBandedBox={
-        name=ccr_b3,
+\draw [connection]  (ccr_b2-south)    -- node {\midarrow} (pool_b2-north);
+
+\pic[shift={(0.5, 0, 0)}] at (pool_b2-east) 
+    {Box={
+        name=ccr_b3a,
         caption= ,
-        xlabel={{ 128, 128 }},
+        xlabel={{128, }},
         zlabel=64,
         fill=\ConvColor,
-        bandfill=\ConvReluColor,
         height=10,
-        width={ 12 , 12 },
-        depth=10
+        width=8,
+        depth=0
         }
     };
 
-\draw [connection]  (ccr_b2-east)    -- node {\midarrow} (ccr_b3-west);
+\pic[shift={(0.5, 0, 0)}] at (ccr_b3a-east) 
+    {Box={
+        name=ccr_b3,
+        caption= ,
+        xlabel={{128, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=10,
+        width=8,
+        depth=0
+        }
+    };
+
+\draw [connection]  (ccr_b3a-east)    -- node {\midarrow} (ccr_b3-west);
+
+\draw [connection]  (pool_b2-east)    -- node {\midarrow} (ccr_b3a-west);
 
 \pic[shift={ (1,0,0) }] at (ccr_b3-east) 
     {Box={
@@ -375,10 +391,10 @@
 
 \draw [connection]  (end_b8-east)    -- node {\midarrow} (unpool_b9-west);
 
-\path (ccr_b1b-southeast) -- (ccr_b1b-northeast) coordinate[pos=1.25] (ccr_b1b-top) ;
+\path (ccr_b1-southeast) -- (ccr_b1-northeast) coordinate[pos=1.25] (ccr_b1-top) ;
 \path (ccr_res_b9-south)  -- (ccr_res_b9-north)  coordinate[pos=1.25] (ccr_res_b9-top) ;
-\draw [copyconnection]  (ccr_b1b-northeast)  
--- node {\copymidarrow}(ccr_b1b-top)
+\draw [copyconnection]  (ccr_b1-northeast)  
+-- node {\copymidarrow}(ccr_b1-top)
 -- node {\copymidarrow}(ccr_res_b9-top)
 -- node {\copymidarrow} (ccr_res_b9-north);
 

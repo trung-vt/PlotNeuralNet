@@ -19,7 +19,7 @@ def get_double_conv(
     else: raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
     
     block_a = f"ccr_{name}a"
-    block_b = f"ccr_{name}b"
+    block_last = f"ccr_{name}"
     b_to_a_offset = "(0.5, 0, 0)"
 
     return [
@@ -31,13 +31,13 @@ def get_double_conv(
             width=n_channels_display, height=feature_map_size_display, depth=depth_display 
         ),
         to_Conv(
-            name=block_b, ###############
+            name=block_last, ###############
             offset=b_to_a_offset, 
             to=f"({block_a}-east)", 
             s_filer=feature_map_size, n_filer=n_channels, 
             width=n_channels_display, height=feature_map_size_display, depth=depth_display
         ),
-        to_connection(block_a, block_b),
+        to_connection(block_a, block_last),
     ]
 
 
@@ -126,12 +126,13 @@ arch = [
         offset="(0, -5, 0)", 
         # to="(ccr_b1-east)", #################
         # to="(ccr_b1a-east)", #################
-        to="(ccr_b1b-southwest)", #################
+        to="(ccr_b1-southwest)", #################
+        # to="(ccr_b1b-southwest)", #################
         width=2, 
         height=20, depth=0, opacity=0.5),
     
     # #arrow
-    to_connection_vertical( "ccr_b1b", "pool_b1"),
+    to_connection_vertical( "ccr_b1", "pool_b1"),
 
     # to_ConvConvRelu( 
     #     name="ccr_b2",
@@ -144,46 +145,46 @@ arch = [
     #     depth=20,   
     #     ),    
 
-    # *get_double_conv(
-    #     name="b2",
-    #     offset="(1,0,0)",
-    #     relative_to="pool_b1",
-    #     feature_map_size=128,
-    #     n_channels=64,
-    #     feature_map_size_display=20,
-    #     n_channels_display=4,
-    #     n_dim=2,
-    # ),
-
-    to_Conv(
-        name="ccr_b2a", ###############
-        offset="(0.5, 0, 0)", 
-        to=f"(pool_b1-east)", 
-        s_filer="", n_filer=64, 
-        width=4, height=20, depth=0 
+    *get_double_conv(
+        name="b2",
+        offset="(0.5,0,0)",
+        relative_to="(pool_b1-east)",
+        feature_map_size=128,
+        n_channels=64,
+        feature_map_size_display=20,
+        n_channels_display=4,
+        n_dim=2,
     ),
     to_connection("pool_b1", "ccr_b2a"),
-    to_Conv(
-        name="ccr_b2", ###############
-        offset="(0.5, 0, 0)", 
-        to=f"(ccr_b2a-east)", 
-        s_filer=128, n_filer=64, 
-        width=4, height=20, depth=0
-    ),
-    to_connection("ccr_b2a", "ccr_b2"),
+    # to_Conv(
+    #     name="ccr_b2a", ###############
+    #     offset="(0.5, 0, 0)", 
+    #     to=f"(pool_b1-east)", 
+    #     s_filer="", n_filer=64, 
+    #     width=4, height=20, depth=0 
+    # ),
+    # to_connection("pool_b1", "ccr_b2a"),
+    # to_Conv(
+    #     name="ccr_b2", ###############
+    #     offset="(0.5, 0, 0)", 
+    #     to=f"(ccr_b2a-east)", 
+    #     s_filer=128, n_filer=64, 
+    #     width=4, height=20, depth=0
+    # ),
+    # to_connection("ccr_b2a", "ccr_b2"),
 
 
     #block-002: maxpool + double conv 64->128
     to_Pool(         
         name="pool_b2", 
         offset="(0,-4.5,0)", 
-        to="(ccr_b2-east)",  
+        to="(ccr_b2-southwest)",  
         width=4,         
         height=10, 
-        depth=10, 
+        depth=0, 
         opacity=0.5, 
         ),
-
+    to_connection_vertical( "ccr_b2", "pool_b2"),
     # # arrow
     # to_connection( 
     #     # "pool_b1", 
@@ -203,26 +204,38 @@ arch = [
     #     opacity=0.5 ),
 
     # [
-    to_ConvConvRelu( 
-        name="ccr_b3",
-        s_filer=str(64), 
-        n_filer=(128,128), 
-        offset="(0,0,0)", 
-        # to="(pool_b2-east)", 
-        to="(pool_b2-east)", 
-        width=(12, 12), 
-        height=10, 
-        depth=10,   
-        ),    
+    # to_ConvConvRelu( 
+    #     name="ccr_b3",
+    #     s_filer=str(64), 
+    #     n_filer=(128,128), 
+    #     offset="(0,0,0)", 
+    #     # to="(pool_b2-east)", 
+    #     to="(pool_b2-east)", 
+    #     width=(12, 12), 
+    #     height=10, 
+    #     depth=10,   
+    #     ),    
 
-    # arrow
-    to_connection( 
-        # "pool_b1", 
-        "ccr_b2",
-        # "pool_b2"
-        "ccr_b3"
-        ),
-    # ],
+    *get_double_conv(
+        name="b3",
+        offset="(0.5, 0, 0)",
+        relative_to="(pool_b2-east)",
+        feature_map_size=64,
+        n_channels=128,
+        feature_map_size_display=10,
+        n_channels_display=8,
+        n_dim=2,
+    ),
+    to_connection("pool_b2", "ccr_b3a"),
+
+    # # arrow
+    # to_connection( 
+    #     # "pool_b1", 
+    #     "ccr_b2",
+    #     # "pool_b2"
+    #     "ccr_b3"
+    #     ),
+    # # ],
 
     #block-003: maxpool + double conv 128->256
     to_Pool(         
@@ -583,7 +596,7 @@ arch = [
             ),
     # # ]
 
-    to_skip( of='ccr_b1b', to='ccr_res_b9', pos=1.25),
+    to_skip( of='ccr_b1', to='ccr_res_b9', pos=1.25),
     
     to_ConvSoftMax( 
         name="soft1", 
