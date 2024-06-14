@@ -147,59 +147,69 @@ arch = [
     # to_connection("ccr_b2a", "ccr_b2"),
 
 
-    #block-002: maxpool + double conv 64->128
-    to_Pool(         
-        name="pool_b2", 
-        offset="(0,-4.5,0)", 
-        to="(ccr_b2-southwest)",  
-        width=4,         
-        height=10, 
-        depth=0, 
-        opacity=0.5, 
-        ),
-    to_connection_vertical( "ccr_b2", "pool_b2"),
-    # # arrow
-    # to_connection( 
-    #     # "pool_b1", 
-    #     "ccr_b2",
-    #     "pool_b2"
-    #     ),
-    # # ],
-
-    # *block_2ConvPool( 
-    #     name='b3', ##############
-    #     botton='pool_b2', ############## 
-    #     top='pool_b3', ##############
-    #     s_filer=64, 
-    #     n_filer=128, 
-    #     offset="(0,0,0)", 
-    #     size=(32 - 8, 32 - 8, 4.5), 
-    #     opacity=0.5 ),
-
-    # [
-    # to_ConvConvRelu( 
-    #     name="ccr_b3",
-    #     s_filer=str(64), 
-    #     n_filer=(128,128), 
-    #     offset="(0,0,0)", 
-    #     # to="(pool_b2-east)", 
-    #     to="(pool_b2-east)", 
-    #     width=(12, 12), 
-    #     height=10, 
-    #     depth=10,   
-    #     ),    
-
-    *get_double_conv(
-        name="b3",
-        offset="(0.5, 0, 0)",
-        relative_to="(pool_b2-east)",
-        feature_map_size=64,
-        n_channels=128,
+    *get_encoder_block(
+        block_num=3,
+        offset="(0, -3, 0)", relative_to="ccr_b2", direction="southwest",
+        feature_map_size=64, n_channels=128,
         feature_map_size_display=10,
-        n_channels_display=8,
+        n_in_channels_display=4,
+        n_out_channels_display=8,
         n_dim=2,
     ),
-    to_connection("pool_b2", "ccr_b3a"),
+
+    # #block-002: maxpool + double conv 64->128
+    # to_Pool(         
+    #     name="pool_b2", 
+    #     offset="(0,-4.5,0)", 
+    #     to="(ccr_b2-southwest)",  
+    #     width=4,         
+    #     height=10, 
+    #     depth=0, 
+    #     opacity=0.5, 
+    #     ),
+    # to_connection_vertical( "ccr_b2", "pool_b2"),
+    # # # arrow
+    # # to_connection( 
+    # #     # "pool_b1", 
+    # #     "ccr_b2",
+    # #     "pool_b2"
+    # #     ),
+    # # # ],
+
+    # # *block_2ConvPool( 
+    # #     name='b3', ##############
+    # #     botton='pool_b2', ############## 
+    # #     top='pool_b3', ##############
+    # #     s_filer=64, 
+    # #     n_filer=128, 
+    # #     offset="(0,0,0)", 
+    # #     size=(32 - 8, 32 - 8, 4.5), 
+    # #     opacity=0.5 ),
+
+    # # [
+    # # to_ConvConvRelu( 
+    # #     name="ccr_b3",
+    # #     s_filer=str(64), 
+    # #     n_filer=(128,128), 
+    # #     offset="(0,0,0)", 
+    # #     # to="(pool_b2-east)", 
+    # #     to="(pool_b2-east)", 
+    # #     width=(12, 12), 
+    # #     height=10, 
+    # #     depth=10,   
+    # #     ),    
+
+    # *get_double_conv(
+    #     name="b3",
+    #     offset="(0.5, 0, 0)",
+    #     relative_to="(pool_b2-east)",
+    #     feature_map_size=64,
+    #     n_channels=128,
+    #     feature_map_size_display=10,
+    #     n_channels_display=8,
+    #     n_dim=2,
+    # ),
+    # to_connection("pool_b2", "ccr_b3a"),
 
     # # arrow
     # to_connection( 
@@ -210,44 +220,62 @@ arch = [
     #     ),
     # # ],
 
-    #block-003: maxpool + double conv 128->256
-    to_Pool(         
-        name="pool_b3", 
-        offset="(1,0,0)", 
-        to="(ccr_b3-east)",  
-        width=1,         
-        height=5, 
-        depth=5, 
-        opacity=0.5, 
-        ),
 
-    # arrow
-    to_connection( 
-        # "pool_b2",
-        "ccr_b3",
-        "pool_b3"
-        ),
-    # ],
 
-    # *block_2ConvPool( 
-    #     name='b4', ##############
-    #     botton='pool_b3', ##############
-    #     top='pool_b4', ##############
-    #     s_filer=32,  
-    #     n_filer=256, 
-    #     offset="(1,0,0)", size=(16,16,5.5), opacity=0.5 ),
 
-    # [
-    to_ConvConvRelu( 
-        name="ccr_b4",
-        s_filer=str(32), 
-        n_filer=(256,256), 
-        offset="(0, 0, 0)", 
-        to="(pool_b3-east)", 
-        width=(18, 18), 
-        height=5, 
-        depth=5,   
-    ),    
+    *get_encoder_block(
+        block_num=4,
+        offset="(0, -2, 0)", relative_to="ccr_b3", direction="southwest",
+        feature_map_size=32, n_channels=256,
+        feature_map_size_display=5,
+        n_in_channels_display=8,
+        n_out_channels_display=16,
+        n_dim=2,
+    ),
+
+    # #block-003: maxpool + double conv 128->256
+    # to_Pool(         
+    #     name="pool_b3", 
+    #     offset="(1,0,0)", 
+    #     to="(ccr_b3-east)",  
+    #     width=1,         
+    #     height=5, 
+    #     depth=5, 
+    #     opacity=0.5, 
+    #     ),
+
+    # # arrow
+    # to_connection( 
+    #     # "pool_b2",
+    #     "ccr_b3",
+    #     "pool_b3"
+    #     ),
+    # # ],
+
+    # # *block_2ConvPool( 
+    # #     name='b4', ##############
+    # #     botton='pool_b3', ##############
+    # #     top='pool_b4', ##############
+    # #     s_filer=32,  
+    # #     n_filer=256, 
+    # #     offset="(1,0,0)", size=(16,16,5.5), opacity=0.5 ),
+
+    # # [
+    # to_ConvConvRelu( 
+    #     name="ccr_b4",
+    #     s_filer=str(32), 
+    #     n_filer=(256,256), 
+    #     offset="(0, 0, 0)", 
+    #     to="(pool_b3-east)", 
+    #     width=(18, 18), 
+    #     height=5, 
+    #     depth=5,   
+    # ),    
+
+
+
+
+
 
     # #block-003: maxpool + double conv 128->256
     # to_Pool(         
