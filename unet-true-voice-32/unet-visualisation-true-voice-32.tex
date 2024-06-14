@@ -28,26 +28,28 @@
         name=ccr_b1a,
         caption= ,
         xlabel={{32, }},
-        zlabel=123,
+        zlabel=256,
         fill=\ConvColor,
         height=40,
         width=2,
-        depth=40
+        depth=0
         }
     };
 
-\pic[shift={(1,0,0)}] at (ccr_b1a-east) 
+\pic[shift={(0.5, 0, 0)}] at (ccr_b1a-east) 
     {Box={
         name=ccr_b1b,
         caption= ,
         xlabel={{32, }},
-        zlabel=123,
+        zlabel=256,
         fill=\ConvColor,
         height=40,
         width=2,
-        depth=40
+        depth=0
         }
     };
+
+\draw [connection]  (ccr_b1a-east)    -- node {\midarrow} (ccr_b1b-west);
 
 \pic[shift={ (0, -5, 0) }] at (ccr_b1b-southwest) 
     {Box={

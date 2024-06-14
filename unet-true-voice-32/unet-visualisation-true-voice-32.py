@@ -6,30 +6,88 @@ from pycore.blocks  import *
 
 def get_double_conv(
         name: str,
-        size: int,
-        channels: int,
-        display_size: int,
-        actual_width_channels: int,
+        offset: str,
+        relative_to: str,
+        feature_map_size: int,
+        n_channels: int,
+        feature_map_size_display: int,
+        n_channels_display: int,
+        n_dim: int = 2,
 ):
+    if n_dim == 2: depth_display = 0
+    elif n_dim == 3: depth_display = feature_map_size_display
+    else: raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
+    
+    block_a = f"ccr_{name}a"
+    block_b = f"ccr_{name}b"
+    b_to_a_offset = (0.5, 0, 0)
+
     return [
     # #block-000: double conv only 1->32
         to_Conv(
-            name=f'ccr_{name}a', ###############
-            s_filer=size, 
-            n_filer=channels, 
-            offset="(0,0,0)", 
-            to="(0,0,0)", 
-            width=actual_width_channels, 
-            height=display_size, depth=display_size  ),
+            name=block_a, ###############
+            offset=offset, 
+            to=relative_to, 
+            s_filer=feature_map_size, n_filer=n_channels, 
+            width=n_channels_display, height=feature_map_size_display, depth=depth_display 
+        ),
         to_Conv(
-            name=f'ccr_{name}b', ###############
-            s_filer=size, 
-            n_filer=channels, 
-            offset="(1,0,0)", 
-            to=f"(ccr_{name}a-east)", 
-            width=actual_width_channels, 
-            height=display_size, depth=display_size  ),
+            name=block_b, ###############
+            offset=b_to_a_offset, 
+            to=f"({block_a}-east)", 
+            s_filer=feature_map_size, n_filer=n_channels, 
+            width=n_channels_display, height=feature_map_size_display, depth=depth_display
+        ),
+        to_connection(block_a, block_b),
     ]
+
+
+def get_encoder_block(
+        block_num: int,
+        feature_map_size_display: int,
+        n_in_channels_display: int,
+        n_out_channels_display: int,
+        n_dim: int = 2,
+):
+    if n_dim == 2:
+        depth_display = 0
+    elif n_dim == 3:
+        depth_display = feature_map_size_display
+    else:
+        raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
+    
+    # block_num = 1
+    # n_in_channels_display = 2
+    # n_out_channels_display = 4
+
+
+    return [
+        #block-001: maxpool + double conv 32->64
+        to_Pool(
+            name=f"pool_b{block_num}", ##############
+            offset="(0, -5, 0)", 
+            to=f"(ccr_b{block_num}b-southwest)", #################
+            width=n_in_channels_display, 
+            height=20, 
+            depth=20, 
+            opacity=0.5
+        ),
+        
+        # #arrow
+        to_connection_vertical( f"ccr_b{block_num}b", f"pool_b{block_num}"),
+
+        to_ConvConvRelu( 
+            name=f"ccr_b{block_num+1}",
+            s_filer=str(128), 
+            n_filer=(64,64), 
+            offset="(0,0,0)", 
+            to=f"(pool_b{block_num+1}-east)", 
+            width=(n_out_channels_display, n_out_channels_display), 
+            height=20, 
+            depth=20,   
+        ),   
+    ] 
+
 
 arch = [ 
     to_head('..'), 
@@ -42,8 +100,25 @@ arch = [
 
 
     # # #block-000: double conv only 1->32
-    *get_double_conv(name="b1", size=256, channels=32, display_size=40, display_width_channels=2),
-    
+    *get_double_conv(
+        name="b1",
+        offset="(0,0,0)",
+        relative_to="(0,0,0)",
+        feature_map_size=256,
+        n_channels=32,
+        feature_map_size_display=40,
+        n_channels_display=2,
+        n_dim=2,
+    ),
+
+
+    # *get_encoder_block(
+    #     block_num=1,
+    #     feature_map_size_display=20,
+    #     n_in_channels_display=2,
+    #     n_out_channels_display=4,
+    #     n_dim=2,
+    # ),
 
     #block-001: maxpool + double conv 32->64
     to_Pool(
