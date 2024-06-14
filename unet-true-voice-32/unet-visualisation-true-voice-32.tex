@@ -53,7 +53,7 @@
 
 \pic[shift={ (0, -5, 0) }] at (ccr_b1-southwest) 
     {Box={
-        name=pool_b1,
+        name=pool_b2,
         caption= ,
         fill=\PoolColor,
         opacity=0.5,
@@ -63,9 +63,9 @@
         }
     };
 
-\draw [connection]  (ccr_b1-south)    -- node {\midarrow} (pool_b1-north);
+\draw [connection]  (ccr_b1-south)    -- node {\midarrow} (pool_b2-north);
 
-\pic[shift={(0.5,0,0)}] at (pool_b1-east) 
+\pic[shift={(0.5, 0, 0)}] at (pool_b2-east) 
     {Box={
         name=ccr_b2a,
         caption= ,
@@ -93,7 +93,7 @@
 
 \draw [connection]  (ccr_b2a-east)    -- node {\midarrow} (ccr_b2-west);
 
-\draw [connection]  (pool_b1-east)    -- node {\midarrow} (ccr_b2a-west);
+\draw [connection]  (pool_b2-east)    -- node {\midarrow} (ccr_b2a-west);
 
 \pic[shift={ (0,-4.5,0) }] at (ccr_b2-southwest) 
     {Box={
@@ -153,7 +153,7 @@
 
 \draw [connection]  (ccr_b3-east)    -- node {\midarrow} (pool_b3-west);
 
-\pic[shift={ (0,0,0) }] at (pool_b3-east) 
+\pic[shift={ (0, 0, 0) }] at (pool_b3-east) 
     {RightBandedBox={
         name=ccr_b4,
         caption= ,
