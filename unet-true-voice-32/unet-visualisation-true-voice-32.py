@@ -5,6 +5,7 @@ from pycore.tikzeng import *
 from pycore.blocks  import *
 
 N_DIM = 2
+# N_DIM = 3
 
 def get_double_conv(
         name: str,
@@ -97,7 +98,7 @@ def get_decoder_block(
     if n_dim == 2:
         depth = 0
     elif n_dim == 3:
-        depth = 10
+        depth = feature_map_size_display
     else:
         raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
     return [
@@ -108,7 +109,8 @@ def get_decoder_block(
             width=n_out_channels_display,              
             height=feature_map_size_display,       
             depth=depth, 
-            opacity=0.5 
+            opacity=0.5,
+            # opacity=1,
         ),
         # arrow(f"{relative_to}-northwest", f"unpool_b{block_num}-southwest"),
 
@@ -176,7 +178,7 @@ arch = [
     # block-002: maxpool + double conv 64->128
     *get_encoder_block(
         block_num=3,
-        offset="(0, -3, 0)", relative_to="ccr_b2", direction="southwest",
+        offset="(0, -2, 0)", relative_to="ccr_b2", direction="southwest",
         feature_map_size=64, n_channels=128,
         feature_map_size_display=10,
         n_in_channels_display=4,
@@ -187,7 +189,7 @@ arch = [
     # block-003: maxpool + double conv 128->256
     *get_encoder_block(
         block_num=4,
-        offset="(0, -2, 0)", relative_to="ccr_b3", direction="southwest",
+        offset="(0, -1.5, 0)", relative_to="ccr_b3", direction="southwest",
         feature_map_size=32, n_channels=256,
         feature_map_size_display=5,
         n_in_channels_display=8,
@@ -198,7 +200,7 @@ arch = [
     
     *get_decoder_block(
         block_num=7, encoder_block_num=3,
-        offset="(0, 2.5, 0)", relative_to="ccr_b4", direction="northwest",
+        offset="(0, 1.5 + 0.5, 0)", relative_to="ccr_b4", direction="northwest",
         feature_map_size=64, n_channels=128,
         n_encoder_channels_display=8,
         n_out_channels_display=8,
@@ -208,7 +210,7 @@ arch = [
 
     *get_decoder_block(
         block_num=8, encoder_block_num=2,
-        offset="(0, 4, 0)", relative_to="ccr_b7", direction="northwest",
+        offset="(0, 2 + 1, 0)", relative_to="ccr_b7", direction="northwest",
         feature_map_size=128, n_channels=64,
         n_encoder_channels_display=4,
         n_out_channels_display=4,
@@ -218,7 +220,7 @@ arch = [
 
     *get_decoder_block(
         block_num=9, encoder_block_num=1,
-        offset="(0, 5, 0)", relative_to="ccr_b8", direction="northwest",
+        offset="(0, 3 + 2, 0)", relative_to="ccr_b8", direction="northwest",
         feature_map_size=256, n_channels=32,
         n_encoder_channels_display=2,
         n_out_channels_display=2,
@@ -237,7 +239,7 @@ arch = [
         width=0.5, 
         height=40, 
         # depth=40, 
-        depth=0, 
+        depth=0 if N_DIM == 2 else 40, 
         # caption="SOFT" 
         # caption="MSE"
         ),
