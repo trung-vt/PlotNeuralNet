@@ -4,6 +4,33 @@ sys.path.append('../')
 from pycore.tikzeng import *
 from pycore.blocks  import *
 
+def get_double_conv(
+        name: str,
+        size: int,
+        channels: int,
+        display_size: int,
+        actual_width_channels: int,
+):
+    return [
+    # #block-000: double conv only 1->32
+        to_Conv(
+            name=f'ccr_{name}a', ###############
+            s_filer=size, 
+            n_filer=channels, 
+            offset="(0,0,0)", 
+            to="(0,0,0)", 
+            width=actual_width_channels, 
+            height=display_size, depth=display_size  ),
+        to_Conv(
+            name=f'ccr_{name}b', ###############
+            s_filer=size, 
+            n_filer=channels, 
+            offset="(1,0,0)", 
+            to=f"(ccr_{name}a-east)", 
+            width=actual_width_channels, 
+            height=display_size, depth=display_size  ),
+    ]
+
 arch = [ 
     to_head('..'), 
     to_cor(),
@@ -13,59 +40,10 @@ arch = [
     # to_input( '../examples/fcn8s/cats.jpg', width=8, height=8),
     to_input( '../examples/noisy.png', width=8, height=8),
 
-    to_Conv(
-        name='ccr_b1a', ###############
-        s_filer=256, 
-        n_filer=(32,32), 
-        offset="(0,0,0)", 
-        to="(0,0,0)", 
-        width=2, 
-        height=40, depth=40  ),
 
-
-    to_Conv(
-        name='ccr_b1b', ###############
-        s_filer=256, 
-        n_filer=(32,32), 
-        offset="(1,0,0)", 
-        to="(ccr_b1a-east)", 
-        width=2, 
-        height=40, depth=40  ),
+    # # #block-000: double conv only 1->32
+    *get_double_conv(name="b1", size=256, channels=32, display_size=40, display_width_channels=2),
     
-
-    # #block-000: double conv only 1->32
-    # to_ConvConvRelu( 
-    #     name='ccr_b1', ###############
-    #     s_filer=256, 
-    #     n_filer=(32,32), 
-    #     offset="(0,0,0)", 
-    #     # to="(0,0,0)",
-    #     # to="(ccr_b1a-east)",
-    #     to="(ccr_b1b-east)",
-    #     width=(2,2), 
-    #     height=40, depth=40  ),
-
-
-    # to_Conv(
-    #     name='ccr_b1a', ###############
-    #     s_filer=256, 
-    #     n_filer=(32,32), 
-    #     offset="(0,0,0)", 
-    #     to="(0,0,0)", 
-    #     width=2, 
-    #     height=40, depth=40  ),
-
-    # to_Conv(
-    #     name='ccr_b1b', ###############
-    #     s_filer=256, 
-    #     n_filer=(32,32), 
-    #     offset="(1,0,0)", 
-    #     to="(ccr_b1a-east)", 
-    #     width=2, 
-    #     height=40, depth=40  ),
-
-    # #arrow
-    # to_connection( "(0, 0, 0)", "ccr_b1"),
 
     #block-001: maxpool + double conv 32->64
     to_Pool(
@@ -79,20 +57,8 @@ arch = [
         height=20, depth=20, opacity=0.5),
     
     # #arrow
-    # to_connection( "ccr_b1", "pool_b1"),
-    # to_connection( "ccr_b1a", "pool_b1"),
-    # to_connection( "ccr_b1b", "pool_b1"),
     to_connection_vertical( "ccr_b1b", "pool_b1"),
 
-    # *block_2ConvPool( 
-    #     name='b2', ##############
-    #     botton='pool_b1', ##############
-    #     top='pool_b2', ##############
-    #     s_filer=128, 
-    #     n_filer=64, 
-    #     offset="(1,0,0)", size=(32,32,3.5), opacity=0.5 ),
-
-    # [
     to_ConvConvRelu( 
         name="ccr_b2",
         s_filer=str(128), 
@@ -104,11 +70,6 @@ arch = [
         depth=20,   
         ),    
 
-    # #arrow
-    # to_connection_vertical( 
-    #     "ccr_b1", 
-    #     "ccr_b2"
-    # ),
 
     #block-002: maxpool + double conv 64->128
     to_Pool(         
