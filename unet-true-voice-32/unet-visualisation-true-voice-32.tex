@@ -195,8 +195,6 @@
         }
     };
 
-\draw [connection]  (ccr_b4-northwest)    -- node {\midarrow} (unpool_b7-southwest);
-
 \pic[shift={(0, 0, 0)}] at (unpool_b7-east) 
     {Box={
         name=ccr_res_b7,
@@ -210,12 +208,9 @@
         }
     };
 
-\path (ccr_b3-southeast) -- (ccr_b3-northeast) coordinate[pos=1.25] (ccr_b3-top) ;
-\path (ccr_res_b7-south)  -- (ccr_res_b7-north)  coordinate[pos=1.25] (ccr_res_b7-top) ;
-\draw [copyconnection]  (ccr_b3-northeast)  
--- node {\copymidarrow}(ccr_b3-top)
--- node {\copymidarrow}(ccr_res_b7-top)
--- node {\copymidarrow} (ccr_res_b7-north);
+\draw [connection]  (ccr_b3-east)    -- node {\midarrow} (unpool_b7-west);
+
+\draw [connection]  (ccr_b4-northeast)    -- node {\midarrow} (ccr_res_b7-southeast);
 
 \pic[shift={(0.5, 0, 0)}] at (ccr_res_b7-east) 
     {Box={
@@ -259,8 +254,6 @@
         }
     };
 
-\draw [connection]  (ccr_b7-northwest)    -- node {\midarrow} (unpool_b8-southwest);
-
 \pic[shift={(0, 0, 0)}] at (unpool_b8-east) 
     {Box={
         name=ccr_res_b8,
@@ -274,12 +267,9 @@
         }
     };
 
-\path (ccr_b2-southeast) -- (ccr_b2-northeast) coordinate[pos=1.25] (ccr_b2-top) ;
-\path (ccr_res_b8-south)  -- (ccr_res_b8-north)  coordinate[pos=1.25] (ccr_res_b8-top) ;
-\draw [copyconnection]  (ccr_b2-northeast)  
--- node {\copymidarrow}(ccr_b2-top)
--- node {\copymidarrow}(ccr_res_b8-top)
--- node {\copymidarrow} (ccr_res_b8-north);
+\draw [connection]  (ccr_b2-east)    -- node {\midarrow} (unpool_b8-west);
+
+\draw [connection]  (ccr_b7-northeast)    -- node {\midarrow} (ccr_res_b8-southeast);
 
 \pic[shift={(0.5, 0, 0)}] at (ccr_res_b8-east) 
     {Box={
@@ -323,8 +313,6 @@
         }
     };
 
-\draw [connection]  (ccr_b8-northwest)    -- node {\midarrow} (unpool_b9-southwest);
-
 \pic[shift={(0, 0, 0)}] at (unpool_b9-east) 
     {Box={
         name=ccr_res_b9,
@@ -338,12 +326,9 @@
         }
     };
 
-\path (ccr_b1-southeast) -- (ccr_b1-northeast) coordinate[pos=1.25] (ccr_b1-top) ;
-\path (ccr_res_b9-south)  -- (ccr_res_b9-north)  coordinate[pos=1.25] (ccr_res_b9-top) ;
-\draw [copyconnection]  (ccr_b1-northeast)  
--- node {\copymidarrow}(ccr_b1-top)
--- node {\copymidarrow}(ccr_res_b9-top)
--- node {\copymidarrow} (ccr_res_b9-north);
+\draw [connection]  (ccr_b1-east)    -- node {\midarrow} (unpool_b9-west);
+
+\draw [connection]  (ccr_b8-northeast)    -- node {\midarrow} (ccr_res_b9-southeast);
 
 \pic[shift={(0.5, 0, 0)}] at (ccr_res_b9-east) 
     {Box={
@@ -382,7 +367,7 @@
         zlabel=256,
         fill=\SoftmaxColor,
         height=40,
-        width=1,
+        width=0.5,
         depth=0
         }
     };

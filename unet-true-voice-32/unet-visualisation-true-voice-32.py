@@ -110,7 +110,8 @@ def get_decoder_block(
             depth=depth, 
             opacity=0.5 
         ),
-        arrow(f"{relative_to}-northwest", f"unpool_b{block_num}-southwest"),
+        # arrow(f"{relative_to}-northwest", f"unpool_b{block_num}-southwest"),
+
         to_Conv(    
             name=f'ccr_res_b{block_num}',   
             offset="(0, 0, 0)", 
@@ -121,7 +122,10 @@ def get_decoder_block(
             height=feature_map_size_display, 
             depth=depth, 
         ),  
-        to_skip( of=f'ccr_b{encoder_block_num}', to=f'ccr_res_b{block_num}', pos=1.25),  
+        # to_skip( of=f'ccr_b{encoder_block_num}', to=f'ccr_res_b{block_num}', pos=1.25),  
+        arrow(f'ccr_b{encoder_block_num}-east', f'unpool_b{block_num}-west'),
+
+        arrow(f"{relative_to}-northeast", f"ccr_res_b{block_num}-southeast"),
 
 
         *get_double_conv(
@@ -229,7 +233,9 @@ arch = [
         offset="(0.75, 0, 0)", 
         # to="(end_b9-east)",
         to="(ccr_b9-east)",
-        width=1, height=40, 
+        # width=1, 
+        width=0.5, 
+        height=40, 
         # depth=40, 
         depth=0, 
         # caption="SOFT" 
