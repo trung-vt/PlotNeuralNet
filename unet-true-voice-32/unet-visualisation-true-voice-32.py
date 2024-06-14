@@ -6,10 +6,8 @@ from pycore.blocks  import *
 
 def get_double_conv(
         name: str,
-        offset: str,
-        relative_to: str,
-        feature_map_size: int,
-        n_channels: int,
+        offset: str, relative_to: str,
+        feature_map_size: int, n_channels: int,
         feature_map_size_display: int,
         n_channels_display: int,
         n_dim: int = 2,
@@ -43,18 +41,17 @@ def get_double_conv(
 
 def get_encoder_block(
         block_num: int,
-        offset: str,
-        relative_to: str,
-        direction: str,
+        offset: str, relative_to: str, direction: str,
+        feature_map_size: int, n_channels: int,
         feature_map_size_display: int,
         n_in_channels_display: int,
         n_out_channels_display: int,
         n_dim: int = 2,
 ):
     if n_dim == 2:
-        depth_display = 0
+        pool_depth = 0
     elif n_dim == 3:
-        depth_display = feature_map_size_display
+        pool_depth = feature_map_size_display
     else:
         raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
 
@@ -65,10 +62,12 @@ def get_encoder_block(
             name=pool_name, ##############
             offset=offset, 
             to=f"({relative_to}-{direction})",
-            width=2, 
-            height=20, depth=0, opacity=0.5),
+            width=n_in_channels_display, 
+            height=feature_map_size_display, 
+            depth=pool_depth, 
+            opacity=0.5),
         
-        # #arrow
+        # arrow
         to_connection_vertical( relative_to, pool_name),
 
         # to_ConvConvRelu( 
@@ -86,11 +85,11 @@ def get_encoder_block(
             name=f"b{block_num}",
             offset="(0.5, 0, 0)",
             relative_to=f"(pool_b{block_num}-east)",
-            feature_map_size=128,
-            n_channels=64,
-            feature_map_size_display=20,
-            n_channels_display=4,
-            n_dim=2,
+            feature_map_size=feature_map_size,
+            n_channels=n_channels,
+            feature_map_size_display=feature_map_size_display,
+            n_channels_display=n_out_channels_display,
+            n_dim=n_dim,
         ),
         to_connection(pool_name, f"ccr_b{block_num}a"), 
     ] 
@@ -101,12 +100,11 @@ arch = [
     to_cor(),
     to_begin(),
     
-    #input
-    # to_input( '../examples/fcn8s/cats.jpg', width=8, height=8),
+    # input
     to_input( '../examples/noisy.png', width=8, height=8),
 
 
-    # # #block-000: double conv only 1->32
+    # block-000: double conv only 1->32
     *get_double_conv(
         name="b1",
         offset="(0,0,0)",
@@ -118,63 +116,13 @@ arch = [
         n_dim=2,
     ),
 
-
-    # *get_encoder_block(
-    #     block_num=1,
-    #     feature_map_size_display=20,
-    #     n_in_channels_display=2,
-    #     n_out_channels_display=4,
-    #     n_dim=2,
-    # ),
-
-
-
-
-    # #block-001: maxpool + double conv 32->64
-    # to_Pool(
-    #     name="pool_b1", ##############
-    #     # offset="(-0.6,-8,-0.6)", 
-    #     offset="(0, -5, 0)", 
-    #     # to="(ccr_b1-east)", #################
-    #     # to="(ccr_b1a-east)", #################
-    #     to="(ccr_b1-southwest)", #################
-    #     # to="(ccr_b1b-southwest)", #################
-    #     width=2, 
-    #     height=20, depth=0, opacity=0.5),
-    
-    # # #arrow
-    # to_connection_vertical( "ccr_b1", "pool_b1"),
-
-    # # to_ConvConvRelu( 
-    # #     name="ccr_b2",
-    # #     s_filer=str(128), 
-    # #     n_filer=(64,64), 
-    # #     offset="(0,0,0)", 
-    # #     to="(pool_b1-east)", 
-    # #     width=(4, 4), 
-    # #     height=20, 
-    # #     depth=20,   
-    # #     ),    
-
-    # *get_double_conv(
-    #     name="b2",
-    #     offset="(0.5,0,0)",
-    #     relative_to="(pool_b1-east)",
-    #     feature_map_size=128,
-    #     n_channels=64,
-    #     feature_map_size_display=20,
-    #     n_channels_display=4,
-    #     n_dim=2,
-    # ),
-    # to_connection("pool_b1", "ccr_b2a"),
-
+    # block-001: maxpool + double conv 32->64
     *get_encoder_block(
         block_num=2,
-        offset="(0, -5, 0)",
-        relative_to="ccr_b1",
-        direction="southwest",
+        offset="(0, -5, 0)", relative_to="ccr_b1", direction="southwest",
+        feature_map_size=128, n_channels=64,
         feature_map_size_display=20,
-        n_in_channels_display=4,
+        n_in_channels_display=2,
         n_out_channels_display=4,
         n_dim=2,
     ),
