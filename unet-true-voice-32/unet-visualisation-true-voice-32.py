@@ -82,23 +82,32 @@ def get_encoder_block(
     ] 
 
 
-def get_decoder_block():
+def get_decoder_block(
+        block_num: int, encoder_block_num: int,
+        offset: str, relative_to: str, direction: str,
+        # feature_map_size: int, n_channels: int,
+        # feature_map_size_display: int,
+        n_in_channels_display: int,
+        # n_out_channels_display: int,
+        # n_dim: int = 2,
+):
     return [
         to_UnPool(  
-            name='unpool_b7',    
-            offset="(1,0,0)",    
+            name=f'unpool_b{block_num}',    
+            offset=offset,    
             # to="(ccr_b6-east)",         
-            to="(ccr_b4-east)",         
+            # to=f"(ccr_b{encoder_block_num}-east)",         
+            to=f"({relative_to}-{direction})",         
             # to="(end_b6-east)",         
-            width=1,              
+            width=n_in_channels_display,              
             height=10,       
             depth=10, 
             opacity=0.5 
             ),
         to_ConvRes( 
-            name='ccr_res_b7',   
+            name=f'ccr_res_b{block_num}',   
             offset="(0,0,0)", 
-            to="(unpool_b7-east)",    
+            to=f"(unpool_b{block_num}-east)",    
             s_filer=str(64), 
             n_filer=str(128), 
             width=6, 
@@ -107,9 +116,9 @@ def get_decoder_block():
             opacity=0.5 
             ),       
         to_Conv(    
-            name='ccr_b7',       
+            name=f'ccr_b{block_num}',       
             offset="(0,0,0)", 
-            to="(ccr_res_b7-east)",   
+            to=f"(ccr_res_b{block_num}-east)",   
             s_filer=str(64), 
             n_filer=str(128), 
             width=6, 
@@ -117,9 +126,9 @@ def get_decoder_block():
             depth=10
             ),
         to_ConvRes( 
-            name='ccr_res_c_b7', 
+            name=f'ccr_res_c_b{block_num}', 
             offset="(0,0,0)", 
-            to="(ccr_b7-east)",       
+            to=f"(ccr_b{block_num}-east)",       
             s_filer=str(64), 
             n_filer=str(128), 
             width=6, 
@@ -128,22 +137,26 @@ def get_decoder_block():
             opacity=0.5 
             ),       
         to_Conv(    
-            name='end_b7',            
+            name=f'end_b{block_num}',            
             offset="(0,0,0)", 
-            to="(ccr_res_c_b7-east)", 
+            to=f"(ccr_res_c_b{block_num}-east)", 
             s_filer=str(64), 
             n_filer=str(128), 
             width=6, 
             height=10, 
             depth=10
             ),
-        to_connection( 
-            # "ccr_b6",
-            "ccr_b4",
-            # "end_b6", 
-            "unpool_b7"
-            ),
-        to_skip( of='ccr_b3', to='ccr_res_b7', pos=1.25),  
+        # to_connection( 
+        #     # "ccr_b6",
+        #     # f"ccr_b{encoder_block_num}",
+        #     f"{relative_to}-north",
+        #     # "end_b6", 
+        #     # f"unpool_b{block_num}"
+        #     f"unpool_b{block_num}-south"
+        #     ),
+        # to_connection_vertical( relative_to, f"unpool_b{block_num}"),
+        arrow(f"{relative_to}-north", f"unpool_b{block_num}-south"),
+        to_skip( of=f'ccr_b{encoder_block_num}', to=f'ccr_res_b{block_num}', pos=1.25),  
     ]
 
 
@@ -201,7 +214,11 @@ arch = [
     ),
 
     
-    *get_decoder_block(),
+    *get_decoder_block(
+        block_num=7, encoder_block_num=3,
+        offset="(0, 2, 0)", relative_to="ccr_b4", direction="north",
+        n_in_channels_display=8,
+    ),
 
 
 

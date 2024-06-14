@@ -183,14 +183,14 @@
 
 \draw [connection]  (pool_b4-east)    -- node {\midarrow} (ccr_b4a-west);
 
-\pic[shift={ (1,0,0) }] at (ccr_b4-east) 
+\pic[shift={ (0, 2, 0) }] at (ccr_b4-north) 
     {Box={
         name=unpool_b7,
         caption= ,
         fill=\UnpoolColor,
         opacity=0.5,
         height=10,
-        width=1,
+        width=8,
         depth=10
         }
     };
@@ -251,7 +251,7 @@
         }
     };
 
-\draw [connection]  (ccr_b4-east)    -- node {\midarrow} (unpool_b7-west);
+\draw [connection]  (ccr_b4-north)    -- node {\midarrow} (unpool_b7-south);
 
 \path (ccr_b3-southeast) -- (ccr_b3-northeast) coordinate[pos=1.25] (ccr_b3-top) ;
 \path (ccr_res_b7-south)  -- (ccr_res_b7-north)  coordinate[pos=1.25] (ccr_res_b7-top) ;
