@@ -20,10 +20,9 @@ def get_double_conv(
     
     block_a = f"ccr_{name}a"
     block_b = f"ccr_{name}b"
-    b_to_a_offset = (0.5, 0, 0)
+    b_to_a_offset = "(0.5, 0, 0)"
 
     return [
-    # #block-000: double conv only 1->32
         to_Conv(
             name=block_a, ###############
             offset=offset, 
@@ -129,7 +128,7 @@ arch = [
         # to="(ccr_b1a-east)", #################
         to="(ccr_b1b-southwest)", #################
         width=2, 
-        height=20, depth=20, opacity=0.5),
+        height=20, depth=0, opacity=0.5),
     
     # #arrow
     to_connection_vertical( "ccr_b1b", "pool_b1"),
@@ -144,6 +143,19 @@ arch = [
         height=20, 
         depth=20,   
         ),    
+
+    # *get_double_conv(
+    #     name="b2",
+    #     offset="(1,0,0)",
+    #     relative_to="pool_b1",
+    #     feature_map_size=128,
+    #     n_channels=64,
+    #     feature_map_size_display=20,
+    #     n_channels_display=4,
+    #     n_dim=2,
+    # ),
+
+
 
 
     #block-002: maxpool + double conv 64->128
