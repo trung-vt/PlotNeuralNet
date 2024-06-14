@@ -184,6 +184,11 @@ def to_connection( of, to):
 \draw [connection]  ("""+of+"""-east)    -- node {\midarrow} ("""+to+"""-west);
 """
 
+def to_connection_vertical( of, to):
+    return r"""
+\draw [connection]  ("""+of+"""-south)    -- node {\midarrow} ("""+to+"""-north);
+"""
+
 def to_skip( of, to, pos=1.25):
     return r"""
 \path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
