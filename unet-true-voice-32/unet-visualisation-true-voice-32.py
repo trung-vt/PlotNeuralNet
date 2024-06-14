@@ -4,8 +4,19 @@ sys.path.append('../')
 from pycore.tikzeng import *
 from pycore.blocks  import *
 
-N_DIM = 2
-# N_DIM = 3
+# N_DIM = 2
+N_DIM = 3
+
+def empty_point(
+        name: str,
+        offset: str,
+        relative_to: str,
+):
+    return to_Pool(
+        name=name, ##############
+        offset=offset, to=relative_to,
+        width=0, height=0, depth=0, opacity=0,
+    ),
 
 def get_double_conv(
         name: str,
@@ -21,6 +32,7 @@ def get_double_conv(
     
     block_a = f"ccr_{name}a"
     block_last = f"ccr_{name}"
+    block_last_front = f"{block_last}_empty_front"
     b_to_a_offset = "(0.5, 0, 0)"
 
     return [
@@ -31,6 +43,15 @@ def get_double_conv(
             s_filer=feature_map_size, n_filer=n_channels, 
             width=n_channels_display, height=feature_map_size_display, depth=depth_display 
         ),
+        # # empty_point(block_last_front, "(0, 0, 0)", f"({block_a}-east)"),
+        # to_Conv(
+        #     name=block_last, ###############
+        #     offset=b_to_a_offset, 
+        #     to=f"({block_a}-east)", 
+        #     s_filer=feature_map_size, n_filer=n_channels, 
+        #     width=0, height=0, depth=0
+        # ),
+        # to_connection(block_a, block_last),
         to_Conv(
             name=block_last, ###############
             offset=b_to_a_offset, 
@@ -149,8 +170,18 @@ arch = [
     to_cor(),
     to_begin(),
     
+    to_Pool(
+        name="start", ##############
+        offset="(0, 0, 0)", 
+        to="(-3.6, 0, 0)",
+        width=0, 
+        height=0, 
+        depth=0, 
+        opacity=0,
+    ),
+
     # input
-    to_input( '../examples/noisy.png', width=8, height=8),
+    to_input( '../examples/noisy.png', to="(-3.6, 0, 0)", width=8, height=8),
 
     # block-000: double conv only 1->32
     *get_double_conv(
@@ -163,6 +194,7 @@ arch = [
         n_channels_display=2,
         n_dim=N_DIM,
     ),
+    arrow("start-east", "ccr_b1a-west"),
 
     # block-001: maxpool + double conv 32->64
     *get_encoder_block(
@@ -229,26 +261,39 @@ arch = [
     ),
 
 
-    to_ConvSoftMax( 
-        name="soft1", 
-        s_filer=256, 
-        offset="(0.75, 0, 0)", 
-        # to="(end_b9-east)",
-        to="(ccr_b9-east)",
-        # width=1, 
-        width=0.5, 
-        height=40, 
-        # depth=40, 
-        depth=0 if N_DIM == 2 else 40, 
-        # caption="SOFT" 
-        # caption="MSE"
-        ),
+    # to_ConvSoftMax( 
+    #     name="soft1", 
+    #     s_filer=256, 
+    #     offset="(0.75, 0, 0)", 
+    #     # to="(end_b9-east)",
+    #     to="(ccr_b9-east)",
+    #     # width=1, 
+    #     width=0.5, 
+    #     height=40, 
+    #     # depth=40, 
+    #     depth=0 if N_DIM == 2 else 40, 
+    #     # caption="SOFT" 
+    #     # caption="MSE"
+    #     ),
 
-    # to_connection( "end_b9", "soft1"),
-    to_connection( "ccr_b9", "soft1"),
+    # # to_connection( "end_b9", "soft1"),
+    # to_connection( "ccr_b9", "soft1"),
 
-    # to_input( '../examples/fcn8s/cats.jpg', width=8, height=8),
      
+    to_Pool(
+        name="end", ##############
+        offset="(0, 0, 0)", 
+        to="(28, 0, 0)",
+        width=0, 
+        height=0, 
+        depth=0, 
+        opacity=0,
+    ),
+    arrow("ccr_b9-east", "end-west"),
+     
+    to_input( '../examples/lambda_map_log.png', to="(28, 0, 0)", width=8, height=8),
+
+
     to_end() 
     ]
 
