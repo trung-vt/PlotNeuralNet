@@ -133,16 +133,16 @@ arch = [
     # #arrow
     to_connection_vertical( "ccr_b1b", "pool_b1"),
 
-    to_ConvConvRelu( 
-        name="ccr_b2",
-        s_filer=str(128), 
-        n_filer=(64,64), 
-        offset="(0,0,0)", 
-        to="(pool_b1-east)", 
-        width=(4, 4), 
-        height=20, 
-        depth=20,   
-        ),    
+    # to_ConvConvRelu( 
+    #     name="ccr_b2",
+    #     s_filer=str(128), 
+    #     n_filer=(64,64), 
+    #     offset="(0,0,0)", 
+    #     to="(pool_b1-east)", 
+    #     width=(4, 4), 
+    #     height=20, 
+    #     depth=20,   
+    #     ),    
 
     # *get_double_conv(
     #     name="b2",
@@ -155,7 +155,22 @@ arch = [
     #     n_dim=2,
     # ),
 
-
+    to_Conv(
+        name="ccr_b2a", ###############
+        offset="(0.5, 0, 0)", 
+        to=f"(pool_b1-east)", 
+        s_filer="", n_filer=64, 
+        width=4, height=20, depth=0 
+    ),
+    to_connection("pool_b1", "ccr_b2a"),
+    to_Conv(
+        name="ccr_b2", ###############
+        offset="(0.5, 0, 0)", 
+        to=f"(ccr_b2a-east)", 
+        s_filer=128, n_filer=64, 
+        width=4, height=20, depth=0
+    ),
+    to_connection("ccr_b2a", "ccr_b2"),
 
 
     #block-002: maxpool + double conv 64->128

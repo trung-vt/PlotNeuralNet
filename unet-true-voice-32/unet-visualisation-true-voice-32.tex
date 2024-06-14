@@ -65,19 +65,35 @@
 
 \draw [connection]  (ccr_b1b-south)    -- node {\midarrow} (pool_b1-north);
 
-\pic[shift={ (0,0,0) }] at (pool_b1-east) 
-    {RightBandedBox={
-        name=ccr_b2,
+\pic[shift={(0.5, 0, 0)}] at (pool_b1-east) 
+    {Box={
+        name=ccr_b2a,
         caption= ,
-        xlabel={{ 64, 64 }},
-        zlabel=128,
+        xlabel={{64, }},
+        zlabel=,
         fill=\ConvColor,
-        bandfill=\ConvReluColor,
         height=20,
-        width={ 4 , 4 },
-        depth=20
+        width=4,
+        depth=0
         }
     };
+
+\draw [connection]  (pool_b1-east)    -- node {\midarrow} (ccr_b2a-west);
+
+\pic[shift={(0.5, 0, 0)}] at (ccr_b2a-east) 
+    {Box={
+        name=ccr_b2,
+        caption= ,
+        xlabel={{64, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=20,
+        width=4,
+        depth=0
+        }
+    };
+
+\draw [connection]  (ccr_b2a-east)    -- node {\midarrow} (ccr_b2-west);
 
 \pic[shift={ (0,-4.5,0) }] at (ccr_b2-east) 
     {Box={
