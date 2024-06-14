@@ -189,6 +189,11 @@ def to_connection_vertical( of, to):
 \draw [connection]  ("""+of+"""-south)    -- node {\midarrow} ("""+to+"""-north);
 """
 
+def arrow(start, end):
+    return r"""
+\draw [connection]  ("""+start+""")    -- node {\midarrow} ("""+end+""");
+"""
+
 def to_skip( of, to, pos=1.25):
     return r"""
 \path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
