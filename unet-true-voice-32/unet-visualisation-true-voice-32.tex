@@ -183,7 +183,7 @@
 
 \draw [connection]  (pool_b4-east)    -- node {\midarrow} (ccr_b4a-west);
 
-\pic[shift={ (0, 2, 0) }] at (ccr_b4-north) 
+\pic[shift={ (0, 2.5, 0) }] at (ccr_b4-northwest) 
     {Box={
         name=unpool_b7,
         caption= ,
@@ -191,26 +191,24 @@
         opacity=0.5,
         height=10,
         width=8,
-        depth=10
+        depth=0
         }
     };
 
-\pic[shift={ (0,0,0) }] at (unpool_b7-east) 
-    {RightBandedBox={
+\pic[shift={(0, 0, 0)}] at (unpool_b7-east) 
+    {Box={
         name=ccr_res_b7,
         caption= ,
-        xlabel={{ 128, }},
+        xlabel={{128, }},
         zlabel=64,
-        fill={rgb:white,1;black,3},
-        bandfill={rgb:white,1;black,2},
-        opacity=0.5,
+        fill=\ConvColor,
         height=10,
-        width=6,
-        depth=10
+        width=8,
+        depth=0
         }
     };
 
-\pic[shift={(0,0,0)}] at (ccr_res_b7-east) 
+\pic[shift={(0.5, 0, 0)}] at (ccr_res_b7-east) 
     {Box={
         name=ccr_b7,
         caption= ,
@@ -218,27 +216,12 @@
         zlabel=64,
         fill=\ConvColor,
         height=10,
-        width=6,
-        depth=10
+        width=8,
+        depth=0
         }
     };
 
-\pic[shift={ (0,0,0) }] at (ccr_b7-east) 
-    {RightBandedBox={
-        name=ccr_res_c_b7,
-        caption= ,
-        xlabel={{ 128, }},
-        zlabel=64,
-        fill={rgb:white,1;black,3},
-        bandfill={rgb:white,1;black,2},
-        opacity=0.5,
-        height=10,
-        width=6,
-        depth=10
-        }
-    };
-
-\pic[shift={(0,0,0)}] at (ccr_res_c_b7-east) 
+\pic[shift={(0.5, 0, 0)}] at (ccr_b7-east) 
     {Box={
         name=end_b7,
         caption= ,
@@ -246,12 +229,12 @@
         zlabel=64,
         fill=\ConvColor,
         height=10,
-        width=6,
-        depth=10
+        width=8,
+        depth=0
         }
     };
 
-\draw [connection]  (ccr_b4-north)    -- node {\midarrow} (unpool_b7-south);
+\draw [connection]  (ccr_b4-northwest)    -- node {\midarrow} (unpool_b7-southwest);
 
 \path (ccr_b3-southeast) -- (ccr_b3-northeast) coordinate[pos=1.25] (ccr_b3-top) ;
 \path (ccr_res_b7-south)  -- (ccr_res_b7-north)  coordinate[pos=1.25] (ccr_res_b7-top) ;

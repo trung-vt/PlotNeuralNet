@@ -67,7 +67,8 @@ def get_encoder_block(
             depth=pool_depth, 
             opacity=0.5
         ),
-        to_connection_vertical( relative_to, pool_name),
+        # to_connection_vertical( relative_to, pool_name),
+        arrow(f"{relative_to}-south", f"{pool_name}-north"),
         *get_double_conv(
             name=f"b{block_num}",
             offset="(0.5, 0, 0)",
@@ -85,77 +86,60 @@ def get_encoder_block(
 def get_decoder_block(
         block_num: int, encoder_block_num: int,
         offset: str, relative_to: str, direction: str,
-        # feature_map_size: int, n_channels: int,
-        # feature_map_size_display: int,
-        n_in_channels_display: int,
-        # n_out_channels_display: int,
-        # n_dim: int = 2,
+        feature_map_size: int, n_channels: int,
+        feature_map_size_display: int,
+        n_encoder_channels_display: int,
+        n_out_channels_display: int,
+        n_dim: int = 2,
 ):
+    if n_dim == 2:
+        depth = 0
+    elif n_dim == 3:
+        depth = 10
+    else:
+        raise ValueError(f"n_dim must be 2 or 3, but got {n_dim}")
     return [
         to_UnPool(  
             name=f'unpool_b{block_num}',    
             offset=offset,    
-            # to="(ccr_b6-east)",         
-            # to=f"(ccr_b{encoder_block_num}-east)",         
             to=f"({relative_to}-{direction})",         
-            # to="(end_b6-east)",         
-            width=n_in_channels_display,              
-            height=10,       
-            depth=10, 
+            width=n_out_channels_display,              
+            height=feature_map_size_display,       
+            depth=depth, 
             opacity=0.5 
             ),
-        to_ConvRes( 
+        to_Conv(    
             name=f'ccr_res_b{block_num}',   
-            offset="(0,0,0)", 
+            offset="(0, 0, 0)", 
             to=f"(unpool_b{block_num}-east)",    
-            s_filer=str(64), 
-            n_filer=str(128), 
-            width=6, 
-            height=10, 
-            depth=10, 
-            opacity=0.5 
+            s_filer=str(feature_map_size), 
+            n_filer=str(n_channels), 
+            width=n_encoder_channels_display, 
+            height=feature_map_size_display, 
+            depth=depth, 
             ),       
         to_Conv(    
             name=f'ccr_b{block_num}',       
-            offset="(0,0,0)", 
+            offset="(0.5, 0, 0)", 
             to=f"(ccr_res_b{block_num}-east)",   
-            s_filer=str(64), 
-            n_filer=str(128), 
-            width=6, 
-            height=10, 
-            depth=10
-            ),
-        to_ConvRes( 
-            name=f'ccr_res_c_b{block_num}', 
-            offset="(0,0,0)", 
-            to=f"(ccr_b{block_num}-east)",       
-            s_filer=str(64), 
-            n_filer=str(128), 
-            width=6, 
-            height=10, 
-            depth=10,
-            opacity=0.5 
-            ),       
+            s_filer=str(feature_map_size), 
+            n_filer=str(n_channels), 
+            width=n_out_channels_display, 
+            height=feature_map_size_display, 
+            depth=depth
+        ),
         to_Conv(    
             name=f'end_b{block_num}',            
-            offset="(0,0,0)", 
-            to=f"(ccr_res_c_b{block_num}-east)", 
-            s_filer=str(64), 
-            n_filer=str(128), 
-            width=6, 
-            height=10, 
-            depth=10
-            ),
-        # to_connection( 
-        #     # "ccr_b6",
-        #     # f"ccr_b{encoder_block_num}",
-        #     f"{relative_to}-north",
-        #     # "end_b6", 
-        #     # f"unpool_b{block_num}"
-        #     f"unpool_b{block_num}-south"
-        #     ),
-        # to_connection_vertical( relative_to, f"unpool_b{block_num}"),
-        arrow(f"{relative_to}-north", f"unpool_b{block_num}-south"),
+            offset="(0.5, 0, 0)", 
+            # to=f"(ccr_res_c_b{block_num}-east)", 
+            to=f"(ccr_b{block_num}-east)", 
+            s_filer=str(feature_map_size), 
+            n_filer=str(n_channels), 
+            width=n_out_channels_display, 
+            height=feature_map_size_display, 
+            depth=depth
+        ),
+        arrow(f"{relative_to}-northwest", f"unpool_b{block_num}-southwest"),
         to_skip( of=f'ccr_b{encoder_block_num}', to=f'ccr_res_b{block_num}', pos=1.25),  
     ]
 
@@ -216,8 +200,12 @@ arch = [
     
     *get_decoder_block(
         block_num=7, encoder_block_num=3,
-        offset="(0, 2, 0)", relative_to="ccr_b4", direction="north",
-        n_in_channels_display=8,
+        offset="(0, 2.5, 0)", relative_to="ccr_b4", direction="northwest",
+        feature_map_size=64, n_channels=128,
+        n_encoder_channels_display=8,
+        n_out_channels_display=8,
+        feature_map_size_display=10,
+        n_dim=2,
     ),
 
 
